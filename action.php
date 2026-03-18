@@ -1,30 +1,37 @@
 <?php
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['name'])) {
     $errors = [];
+
     if (empty($_POST['name'])) {
         $errors[] = "Поле 'Имя' обязательно для заполнения";
     }
+
     if (empty($_POST['email'])) {
         $errors[] = "Поле 'Email' обязательно для заполнения";
     } elseif (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
         $errors[] = "Некорректный формат email";
     }
+
     if (empty($_POST['password'])) {
         $errors[] = "Поле 'Пароль' обязательно для заполнения";
     } elseif (strlen($_POST['password']) < 6) {
         $errors[] = "Пароль должен содержать не менее 6 символов";
     }
+
     if (empty($_POST['confirm_password'])) {
         $errors[] = "Подтвердите пароль";
     } elseif ($_POST['password'] !== $_POST['confirm_password']) {
         $errors[] = "Пароли не совпадают";
     }
+
     if (empty($_POST['gender'])) {
         $errors[] = "Выберите пол";
     }
+
     if (!isset($_POST['agree'])) {
         $errors[] = "Необходимо согласиться с условиями";
     }
+
     if (!empty($errors)) {
         echo "<!DOCTYPE html>
         <html lang='ru'>
