@@ -45,6 +45,9 @@
                 <button type="submit" class="btn-submit">Зарегистрироваться</button>
             </form>
         </div>
+
+
+
         <div class="calculator-container">
             <h2>Калькулятор</h2>
             <form action="action.php" method="POST" class="calculator-form">

@@ -115,6 +115,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['operation'])) {
     exit;
 }
 
-header("Location: index.php");
-exit;
+	header("Location: index.php");
+	exit;
 ?>
