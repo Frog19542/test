@@ -13,20 +13,42 @@ class Page {
 class BlogPage extends Page {
     public function __construct() {
         $this->name = 'blog';
-        $this->template = '
-            <div class="cards-container">
-                <div class="card">
-                    <img src="img/foto2.jpg" alt="Корабль" class="card-img">
-                    <h3>Уплыть на корабле</h3>
-                    <p>Отправьтесь в морское приключение!</p>
-                </div>
-                <div class="card">
-                    <img src="img/foto.jpg" alt="Берег" class="card-img">
-                    <h3>Остаться на берегу</h3>
-                    <p>Наслаждайтесь спокойствием и пляжем.</p>
-                </div>
-            </div>
-        ';
+    }
+
+    public function render(): void {
+        if (isset($_GET['choice'])) {
+            $choice = $_GET['choice'];
+            if ($choice === 'beach') {
+                echo '
+                <div class="result-card">
+                    <img src="/img/foto.png" alt="Пляж" class="result-img">
+                    <h3>Отдых на пляже</h3>
+                    <p>Вы выбрали пляж. Наслаждайтесь солнцем и песком!</p>
+                    <a href="?page=blog" class="back-btn">← Вернуться к выбору</a>
+                </div>';
+            } elseif ($choice === 'sea') {
+                echo '
+                <div class="result-card">
+                    <img src="/img/foto2.png" alt="Корабль" class="result-img">
+                    <h3>Морское путешествие</h3>
+                    <p>Вы выбрали море. Вас ждут приключения на корабле!</p>
+                    <a href="?page=blog" class="back-btn">← Вернуться к выбору</a>
+                </div>';
+            } else {
+                $this->showChoiceButtons();
+            }
+        } else {
+            $this->showChoiceButtons();
+        }
+    }
+
+    private function showChoiceButtons(): void {
+        echo '
+        <div class="buttons-container">
+            <a href="?page=blog&choice=beach" class="choice-btn beach-btn">🏖️ На пляж</a>
+            <a href="?page=blog&choice=sea" class="choice-btn sea-btn">🌊 В море</a>
+        </div>
+        <div class="info-message">Выберите направление, чтобы увидеть картинку и описание.</div>';
     }
 }
 ?>
@@ -34,7 +56,7 @@ class BlogPage extends Page {
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Лаба14</title>
+    <title>Лаба14 – Выбор направления</title>
     <link rel="stylesheet" href="style.css">
     <style>
         .container { max-width: 1000px; margin: 20px auto; padding: 0 20px; }
@@ -58,37 +80,73 @@ class BlogPage extends Page {
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
             margin-top: 20px;
         }
-        .cards-container {
+        .buttons-container {
             display: flex;
+            justify-content: space-between;
             gap: 30px;
-            justify-content: center;
-            flex-wrap: wrap;
+            margin: 20px 0;
         }
-        .card {
-            background: #f8f9fa;
-            border-radius: 12px;
-            overflow: hidden;
-            width: 280px;
+        .choice-btn {
+            flex: 1;
             text-align: center;
-            transition: transform 0.3s, box-shadow 0.3s;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: 20px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 12px;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
-        .card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 12px 20px rgba(0,0,0,0.2);
+        .beach-btn {
+            background: #f8d5a3;
+            color: #b45f1b;
+            border: 2px solid #e0a878;
         }
-        .card-img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
+        .beach-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            background: #f5c47a;
         }
-        .card h3 {
-            margin: 15px 0 5px;
-            color: #333;
+        .sea-btn {
+            background: #a3d0f8;
+            color: #0a4b6e;
+            border: 2px solid #6ba5d9;
         }
-        .card p {
-            padding: 0 15px 20px;
-            color: #666;
+        .sea-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            background: #7bb9f0;
+        }
+        .info-message {
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px;
+            background: #d1ecf1;
+            color: #0c5460;
+            border-radius: 8px;
+        }
+        .result-card {
+            text-align: center;
+            padding: 20px;
+        }
+        .result-img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
+        .back-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        .back-btn:hover {
+            background: #5a67d8;
         }
         .default-page {
             font-size: 1.2rem;
@@ -109,12 +167,17 @@ class BlogPage extends Page {
     <div class="content">
         <h2>
             <?php 
-                if (isset($_GET['page']) && $_GET['page'] === 'blog') 
-                    echo 'Куда отправимся?';
-                elseif (isset($_GET['page']) && $_GET['page'] === 'page')
+                if (isset($_GET['page']) && $_GET['page'] === 'blog') {
+                    if (isset($_GET['choice'])) {
+                        echo ($_GET['choice'] === 'beach') ? '🏖️ Пляжный отдых' : '🌊 Морское путешествие';
+                    } else {
+                        echo 'Куда отправимся?';
+                    }
+                } elseif (isset($_GET['page']) && $_GET['page'] === 'page') {
                     echo 'Стандартная страница';
-                else 
+                } else {
                     echo 'Добро пожаловать! Выберите страницу выше ↑';
+                }
             ?>
         </h2>
         <?php
@@ -126,10 +189,10 @@ class BlogPage extends Page {
                 $blog = new BlogPage();
                 $blog->render();
             } else {
-                echo '<div class="default-page">Неизвестная страница. Используйте ссылки выше.</div>';
+                echo '<div class="default-page">Неизвестная страница.</div>';
             }
         } else {
-            echo '<div class="default-page">Нажмите на одну из ссылок, чтобы увидеть содержимое.</div>';
+            echo '<div class="default-page">✨ Нажмите на одну из ссылок выше.</div>';
         }
         ?>
     </div>
