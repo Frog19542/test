@@ -1,0 +1,120 @@
+<?php
+class Worker {
+    private $name;
+    private $age;
+    private $salary;
+
+    private static $totalSalary = 0;
+
+    public function __construct($name, $age, $salary) {
+        $this->name = $name;
+        $this->setAge($age);
+        $this->salary = $salary;
+        self::$totalSalary += $salary;
+    }
+
+    public function getName() {
+        return $this->name;
+    }
+
+    public function getAge() {
+        return $this->age;
+    }
+
+    public function getSalary() {
+        return $this->salary;
+    }
+
+    public static function getTotalSalary() {
+        return self::$totalSalary;
+    }
+
+    public function setAge($newAge) {
+        if ($this->checkAge($newAge)) {
+            $this->age = $newAge;
+            return true;
+        } else {
+            echo "<div class='message error'>Вам работать в нашей компании еще рано (возраст $newAge &lt; 18)</div>";
+            return false;
+        }
+    }
+
+    private function checkAge($age) {
+        return $age >= 18;
+    }
+}
+?>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Лабораторная 13 – ООП (класс Worker)</title>
+    <link rel="stylesheet" href="style.css">
+<div class="container">
+    <div class="result-container">
+        <h2>Лабораторная работа №13<br>Объектно-ориентированное программирование в PHP</h2>
+
+        <?php
+        // 1. Создаём 2 объекта класса Worker
+        $worker1 = new Worker("Иван Петров", 25, 50000);
+        $worker2 = new Worker("Мария Сидорова", 30, 65000);
+        // Дополнительный объект для проверки возраста <18
+        $worker3 = new Worker("Юный стажёр", 16, 10000);
+        ?>
+
+        <div class="info-block">
+            <h3>📌 Созданные работники</h3>
+            <table>
+                <tr><th>Имя</th><th>Возраст</th><th>Зарплата</th></tr>
+                <tr><td><?= $worker1->getName() ?></td><td><?= $worker1->getAge() ?></td><td><?= $worker1->getSalary() ?> руб.</td></tr>
+                <tr><td><?= $worker2->getName() ?></td><td><?= $worker2->getAge() ?></td><td><?= $worker2->getSalary() ?> руб.</td></tr>
+                <tr><td><?= $worker3->getName() ?></td><td><?= $worker3->getAge() ?></td><td><?= $worker3->getSalary() ?> руб.</td></tr>
+            </table>
+        </div>
+
+        <?php
+        // 2. Сумма зарплат и сумма возрастов
+        $totalSalary = $worker1->getSalary() + $worker2->getSalary() + $worker3->getSalary();
+        $totalAge = $worker1->getAge() + $worker2->getAge() + $worker3->getAge();
+        ?>
+
+        <div class="message success">
+            <strong>💰 Сумма зарплат всех работников:</strong> <?= $totalSalary ?> руб.<br>
+            <strong>🧑‍🤝‍🧑 Сумма возрастов всех работников:</strong> <?= $totalAge ?> лет
+        </div>
+
+        <h3>🔍 Работа методов getName, getAge, getSalary (каждого объекта)</h3>
+        <div class="message info">
+            <strong>Работник 1:</strong> имя = <?= $worker1->getName() ?>, возраст = <?= $worker1->getAge() ?>, зарплата = <?= $worker1->getSalary() ?> руб.<br>
+            <strong>Работник 2:</strong> имя = <?= $worker2->getName() ?>, возраст = <?= $worker2->getAge() ?>, зарплата = <?= $worker2->getSalary() ?> руб.
+        </div>
+
+        <h3>📊 Сумма зарплат через статический метод getTotalSalary()</h3>
+        <div class="message success">
+            <strong>Сумма зарплат (через Worker::getTotalSalary()):</strong> <?= Worker::getTotalSalary() ?> руб.<br>
+            <small>Примечание: при создании каждого работника его зарплата добавляется в общую сумму.</small>
+        </div>
+
+        <h3>🔄 Изменение возраста через setAge (с проверкой 18+)</h3>
+        <div class="message info">
+            <strong>Попытка установить работнику 1 возраст 19:</strong><br>
+            <?php $worker1->setAge(19); ?>
+            Новый возраст <?= $worker1->getName() ?>: <?= $worker1->getAge() ?> лет.
+        </div>
+        <div class="message info">
+            <strong>Попытка установить работнику 2 возраст 15:</strong><br>
+            <?php $worker2->setAge(15); ?>
+            Возраст <?= $worker2->getName() ?> остался прежним: <?= $worker2->getAge() ?> лет.
+        </div>
+
+        <h3>🔒 Приватный метод checkAge используется внутри setAge</h3>
+        <div class="message info">
+            Метод <code>checkAge</code> является <strong>приватным</strong> и вызывается только из <code>setAge</code>.<br>
+            Он возвращает <code>true</code>, если возраст >= 18, иначе <code>false</code>.<br>
+            Попытка вызвать <code>checkAge</code> извне вызовет ошибку (демонстрация закомментирована).
+        </div>
+
+    </div>
+</div>
+</body>
+</html>
